@@ -22,6 +22,7 @@ const authenticationRequired = async (req: express.Request, res: express.Respons
 
   try {
     const accessToken = match[1];
+    console.log(accessToken);
     if (!accessToken) {
       return res.status(401).send();
     }
@@ -32,12 +33,15 @@ const authenticationRequired = async (req: express.Request, res: express.Respons
   }
 };
 
+app.use(cors());
+
 app.get("/api/healthcheck", (_req, res) => {
   res.send("Hello world!");
 });
 
 app.get("/api/whoami", authenticationRequired, (req, res) => {
+  console.log((req as RequestWithToken).jwt);
   res.json((req as RequestWithToken).jwt?.claims);
 });
 
-app.use(cors).listen(port, () => console.log("API Magic happening on port " + port));
+app.listen(port, () => console.log("API Magic happening on port " + port));
